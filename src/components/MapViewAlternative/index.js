@@ -4,61 +4,33 @@ import "leaflet/dist/leaflet.css";
 import { Map, TileLayer, Marker, Polygon } from "react-leaflet";
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
-import { bbox, circle, bboxPolygon, point } from "@turf/turf";
+import equal from "fast-deep-equal";
 
 import { withAuthentication } from "../Session";
 
 class MapViewAlternative extends React.Component {
   constructor(props) {
     super(props);
-    const turfPoint = point([this.props.longitude, this.props.latitude]);
-    const bb = this.generateBbox(turfPoint, this.props.radius);
 
     this.state = {
       center: [this.props.latitude, this.props.longitude],
       markers: [[this.props.latitude, this.props.longitude]],
-      radius: this.props.radius,
-      bbox: bb,
-      bboxPoly: bboxPolygon(bb).geometry.coordinates[0].map((el) => [
-        el[1],
-        el[0]
-      ])
+      bboxPoly: this.props.bboxPoly
     };
   }
 
-  generateBbox = (center, radius) => {
-    var options = { steps: 16, units: "kilometers" };
-    return bbox(circle(center, radius, options));
-    // var points = turf.randomPoint(8, { bbox: bb });
-    // L.geoJson(turf.bboxPolygon(bb)).addTo(map);
-    // L.geoJson(points).addTo(map);
-  };
-
-  addMarker = (e) => {
-    const { markers } = this.state;
-    markers.pop();
-    markers.push(e.latlng);
-    this.setState({ markers });
-  };
-
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if (
-      this.state.center[0] !== this.props.latitude ||
-      this.state.center[1] !== this.props.longitude ||
-      this.state.radius !== this.props.radius
+      !equal(this.props.latitude, prevProps.latitude) ||
+      !equal(this.props.longitude, prevProps.longitude) ||
+      !equal(this.props.bboxPoly, prevProps.bboxPoly) ||
+      !equal(this.props.mines, prevProps.mines)
     ) {
-      const turfPoint = point([this.props.longitude, this.props.latitude]);
-      const bb = this.generateBbox(turfPoint, this.props.radius);
+      console.log(this.props.mines);
       this.setState({
         center: [this.props.latitude, this.props.longitude],
-        radius: this.props.radius,
-        markers: [[this.props.latitude, this.props.longitude]],
-        bbox: bb,
-        bboxPoly: bboxPolygon(bb).geometry.coordinates[0].map((el) => [
-          el[1],
-          el[0]
-        ])
+        bboxPoly: this.props.bboxPoly,
+        markers: this.props.mines
       });
     }
   }
@@ -76,7 +48,6 @@ class MapViewAlternative extends React.Component {
       <div>
         <Map
           center={this.state.center}
-          onClick={this.addMarker}
           zoom={17}
           maxZoom={20}
           minZoom={1}
