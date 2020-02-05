@@ -1,6 +1,6 @@
 {
-  "short_name": "Image web stream",
-  "name": "Image web stream",
+  "short_name": "Mine Detector",
+  "name": "Mine Detector",
   "icons": [
     {
       "src": "/android-icon-36x36.png",

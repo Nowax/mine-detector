@@ -1,25 +1,46 @@
-import React from 'react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
-import blue from '@material-ui/core/colors/blue';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import React from "react";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Image from "../../img/hex4.png";
 
 const theme = createMuiTheme({
+  // palette: {
+  //   primary: {
+  //     light: "#FFD073",
+  //     main: "#FFAA00",
+  //     dark: "#A66F00"
+  //   },
+  //   secondary: {
+  //     light: "#33CCCC",
+  //     main: "#009999",
+  //     dark: "#006363"
+  //   }
+  // },
   palette: {
     primary: {
-      light: blue[100],
-      main: blue[400],
-      dark: blue[800],
+      light: "#50FAFF",
+      main: "#3EDDE2",
+      dark: "#006363"
     },
     secondary: {
-      light: red[300],
-      main: red[500],
-      dark: red[700],
-    },
+      light: "#33CCCC",
+      main: "#009999",
+      dark: "#006363",
+      contrastText: "#ffffff"
+    }
   },
   typography: {
-    useNextVariants: true,
+    useNextVariants: true
   },
+  overrides: {
+    MuiCssBaseline: {
+      "@global": {
+        body: {
+          backgroundImage: `url(${Image})`
+        }
+      }
+    }
+  }
 });
 
 function withTheme(Component) {

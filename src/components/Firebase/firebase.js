@@ -51,6 +51,16 @@ class Firebase {
 
   // *** Firestore API ***
 
+  setGeoJSON = (loc) => {
+    return this.firestore
+      .collection("minefields")
+      .add({
+        created: this.firestore.Timestamp.now()
+      })
+      .collection("mines")
+      .add({ loc });
+  };
+
   getLatestImage = () => {
     return this.firestore
       .collection(latestCollectionName())
