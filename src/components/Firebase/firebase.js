@@ -2,7 +2,6 @@ import app from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import "firebase/firestore";
-import dayjs from "dayjs";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -14,10 +13,6 @@ const config = {
   appId: process.env.REACT_APP_APP_ID,
   measurementId: process.env.REACT_APP_MEASUREMENT_ID
 };
-
-const owner = "bogdan";
-const todayUTC = () => dayjs().format("YYYY-MM-DD");
-const latestCollectionName = () => `${owner}-${todayUTC()}`;
 
 class Firebase {
   constructor() {
@@ -50,27 +45,60 @@ class Firebase {
   users = () => this.db.ref("users");
 
   // *** Firestore API ***
-
-  setGeoJSON = (loc) => {
+  saveGeoPoints = (points) => {
+    const ts = Date.now();
+    const name = `minefield-${ts}`;
     return this.firestore
       .collection("minefields")
-      .add({
-        created: this.firestore.Timestamp.now()
+      .doc(name)
+      .set({
+        date: ts
       })
-      .collection("mines")
-      .add({ loc });
+      .then(() => {
+        console.log("Minefield collection successfully created!");
+        points.features.forEach((p) => {
+          this.firestore
+            .collection("minefields")
+            .doc(name)
+            .collection("mines")
+            .add({
+              location: p
+            })
+            .then(function() {
+              console.log("Document successfully written!");
+            })
+            .catch(function(error) {
+              console.error("Error writing document: ", error);
+            });
+        });
+      })
+      .catch(function(error) {
+        console.error("Error creating minefield collection: ", error);
+      });
   };
 
-  getLatestImage = () => {
+  getLatestMinefield = () => {
     return this.firestore
-      .collection(latestCollectionName())
-      .orderBy("fileName", "desc")
+      .collection("minefields")
+      .orderBy("date", "desc")
       .limit(1)
       .get()
-      .then((prevSnapshot) => {
-        if (prevSnapshot.docs !== 0) {
-          return prevSnapshot.docs[0].data();
-        }
+      .then((snap) => {
+        console.log(snap.docs[0].id, " => ", snap.docs[0].data());
+        return this.firestore
+          .collection("minefields")
+          .doc(snap.docs[0].id)
+          .collection("mines")
+          .get();
+      })
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          console.log(doc.id, " => ", doc.data());
+        });
+        return querySnapshot;
+      })
+      .then((querySnapshot) => {
+        console.log("Received latest minefiled: ", querySnapshot);
       })
       .catch((e) => console.log(e));
   };

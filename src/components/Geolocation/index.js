@@ -6,9 +6,10 @@ import TextField from "@material-ui/core/TextField";
 import { withTheme } from "../Theme";
 import { withAuthentication } from "../Session";
 import { withFirebase } from "../Firebase";
+import { withStyles } from "@material-ui/core/styles";
 
 import MapViewAlternative from "../MapViewAlternative";
-import { bbox, circle, bboxPolygon, randomPoint, flip } from "@turf/turf";
+import { bbox, circle, bboxPolygon, randomPoint } from "@turf/turf";
 
 const DEFAULT_RADIUS = 0.05;
 
@@ -21,7 +22,7 @@ class GeolocatioBase extends React.Component {
       field: null,
       radius: DEFAULT_RADIUS,
       mines: null,
-      minesLocations: null
+      minesLocations: []
     };
   }
 
@@ -37,10 +38,21 @@ class GeolocatioBase extends React.Component {
     navigator.geolocation.getCurrentPosition(
       (center) => {
         console.log(center);
+        const f = this.generateField(center, this.state.radius);
+        const points = randomPoint(this.state.minesLocations.length, {
+          bbox: f
+        });
         this.setState({
           center: center,
           locations: [center],
-          field: this.generateField(center, this.state.radius)
+          field: f,
+          mines: points,
+          minesLocations: points
+            ? points.features.map((el) => [
+                el.geometry.coordinates[1],
+                el.geometry.coordinates[0]
+              ])
+            : null
         });
       },
       (error) => console.log(error.message),
@@ -49,9 +61,9 @@ class GeolocatioBase extends React.Component {
   };
 
   handleSave = () => {
-    this.state.locations.forEach((loc) => {
-      this.props.firebase.setGeoJSON(loc);
-    });
+    this.props.firebase
+      .saveGeoPoints(this.state.mines)
+      .then(() => this.props.firebase.getLatestMinefield());
   };
 
   handleMines = (event) => {
@@ -69,10 +81,10 @@ class GeolocatioBase extends React.Component {
     }
   };
 
-  handleRadius = (event) => {
+  handleSide = (event) => {
     const val =
       event.target.value && event.target.value > 0
-        ? (event.target.value * 1.0) / 1000
+        ? (event.target.value * 0.5) / 1000
         : DEFAULT_RADIUS;
 
     if (this.state.center) {
@@ -96,49 +108,60 @@ class GeolocatioBase extends React.Component {
   };
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div>
         <br />
-        <Button
-          size="large"
-          variant="contained"
-          color="primary"
-          onClick={this.findCoordinates}
-        >
-          Get current location
-        </Button>
-        <br />
-        <br />
-        <TextField
-          type="number"
-          label="Radius (in meters)"
-          variant="filled"
-          inputProps={{ min: "0", max: "100000", step: "1" }}
-          onChange={this.handleRadius}
-          color="primary"
-        />
-        <br />
-        <br />
-        <TextField
-          type="number"
-          label="Number of mines"
-          variant="filled"
-          inputProps={{ min: "0", max: "500", step: "1" }}
-          onChange={this.handleMines}
-          color="primary"
-        />
-        <br />
-        <br />
-        <Button
-          size="large"
-          variant="contained"
-          color="primary"
-          disabled={!this.state.center}
-          onClick={this.handleSave}
-        >
-          Save location
-        </Button>
-        <br />
+        <div className={classes.centered}>
+          <Button
+            size="large"
+            variant="contained"
+            color="primary"
+            onClick={this.findCoordinates}
+          >
+            Get current location
+          </Button>
+        </div>
+        <div className={classes.spaceAround}>
+          <TextField
+            type="number"
+            id="standard-full-width"
+            label="Side in meters"
+            defaultValue={1000 * 2 * DEFAULT_RADIUS}
+            margin="dense"
+            inputProps={{
+              min: "0",
+              max: "100000",
+              step: "1",
+              style: { color: "#000000", background: "#ffffff", size: "7" }
+            }}
+            InputLabelProps={{
+              style: { color: "#ffffff" }
+            }}
+            onChange={this.handleSide}
+            color="white"
+            background-color="white"
+          />
+          <TextField
+            type="number"
+            id="standard-full-width"
+            label="Number of mines"
+            defaultValue={0}
+            margin="dense"
+            inputProps={{
+              min: "0",
+              max: "100000",
+              step: "1",
+              style: { color: "#000000", background: "#ffffff", size: "7" }
+            }}
+            InputLabelProps={{
+              style: { color: "#ffffff" }
+            }}
+            onChange={this.handleMines}
+            color="primary"
+          />
+        </div>
         <br />
         {this.state.center ? (
           <MapViewAlternative
@@ -151,16 +174,42 @@ class GeolocatioBase extends React.Component {
           />
         ) : null}
         <br />
-        <br />
+        <div className={classes.centered}>
+          <Button
+            size="large"
+            variant="contained"
+            color="primary"
+            disabled={!this.state.center}
+            onClick={this.handleSave}
+          >
+            Save location
+          </Button>
+        </div>
       </div>
     );
   }
 }
 
+const styles = {
+  spaceAround: {
+    display: "flex",
+    justifyContent: "space-around"
+  },
+  centered: {
+    display: "flex",
+    justifyContent: "center"
+  },
+  grow: {
+    flex: 1,
+    flexGrow: 1
+  }
+};
+
 const Geolocation = compose(
   withAuthentication,
   withFirebase,
-  withTheme
+  withTheme,
+  withStyles(styles)
 )(GeolocatioBase);
 
 export default Geolocation;
