@@ -51,7 +51,7 @@ class SaveModal extends Component {
             </DialogTitle>
             <DialogContent dividers>
               <Typography gutterBottom>
-                All {this.state.mines.length} mines' location has been
+                All {this.state.mines.length} mines' locations has been
                 successfully stored in cloud DB.
               </Typography>
               <Typography gutterBottom>

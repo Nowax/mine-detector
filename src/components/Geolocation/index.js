@@ -23,7 +23,7 @@ class GeolocatioBase extends React.Component {
       field: null,
       radius: DEFAULT_RADIUS,
       mines: null,
-      minesLocations: [],
+      minesLocations: [1, 2, 3, 4, 5],
       isSaved: null
     };
   }
@@ -164,7 +164,7 @@ class GeolocatioBase extends React.Component {
             type="number"
             id="standard-full-width"
             label="Number of mines"
-            defaultValue={0}
+            defaultValue={this.state.minesLocations.length}
             margin="dense"
             inputProps={{
               min: "0",
