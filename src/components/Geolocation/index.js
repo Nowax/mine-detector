@@ -134,7 +134,7 @@ class GeolocatioBase extends React.Component {
               min: "0",
               max: "100000",
               step: "1",
-              style: { color: "#000000", background: "#ffffff", size: "7" }
+              style: { color: "#000000", background: "#ffffff", width: "130px" }
             }}
             InputLabelProps={{
               style: { color: "#ffffff" }
@@ -153,7 +153,7 @@ class GeolocatioBase extends React.Component {
               min: "0",
               max: "100000",
               step: "1",
-              style: { color: "#000000", background: "#ffffff", size: "7" }
+              style: { color: "#000000", background: "#ffffff", width: "130px" }
             }}
             InputLabelProps={{
               style: { color: "#ffffff" }
