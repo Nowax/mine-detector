@@ -10,6 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 import MapViewAlternative from "../MapViewAlternative";
 import { bbox, circle, bboxPolygon, randomPoint } from "@turf/turf";
+import SaveModal from "../SaveModal";
 
 const DEFAULT_RADIUS = 0.05;
 
@@ -22,7 +23,8 @@ class GeolocatioBase extends React.Component {
       field: null,
       radius: DEFAULT_RADIUS,
       mines: null,
-      minesLocations: []
+      minesLocations: [],
+      isSaved: null
     };
   }
 
@@ -43,8 +45,8 @@ class GeolocatioBase extends React.Component {
           bbox: f
         });
         this.setState({
+          isSaved: null,
           center: center,
-          locations: [center],
           field: f,
           mines: points,
           minesLocations: points
@@ -63,7 +65,20 @@ class GeolocatioBase extends React.Component {
   handleSave = () => {
     this.props.firebase
       .saveGeoPoints(this.state.mines)
-      .then(() => this.props.firebase.getLatestMinefield());
+      .then(() => {
+        this.props.firebase.getLatestMinefield();
+        this.setState({
+          isSaved: true,
+          center: null
+        });
+      })
+      .catch((e) => {
+        console.error("Error saving mines: ", e);
+        this.setState({
+          isSaved: false,
+          center: null
+        });
+      });
   };
 
   handleMines = (event) => {
@@ -72,6 +87,7 @@ class GeolocatioBase extends React.Component {
     if (this.state.field) {
       const points = randomPoint(val, { bbox: this.state.field });
       this.setState({
+        isSaved: null,
         mines: points,
         minesLocations: points.features.map((el) => [
           el.geometry.coordinates[1],
@@ -94,6 +110,7 @@ class GeolocatioBase extends React.Component {
       });
 
       this.setState({
+        isSaved: null,
         radius: val,
         field: f,
         mines: points,
@@ -184,6 +201,9 @@ class GeolocatioBase extends React.Component {
           >
             Save location
           </Button>
+          {this.state.isSaved ? (
+            <SaveModal isSaved={this.state.isSaved} mines={this.state.mines} />
+          ) : null}
         </div>
       </div>
     );

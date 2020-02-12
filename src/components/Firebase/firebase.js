@@ -56,24 +56,20 @@ class Firebase {
       })
       .then(() => {
         console.log("Minefield collection successfully created!");
-        points.features.forEach((p) => {
-          this.firestore
-            .collection("minefields")
-            .doc(name)
-            .collection("mines")
-            .add({
-              location: p
-            })
-            .then(function() {
-              console.log("Document successfully written!");
-            })
-            .catch(function(error) {
-              console.error("Error writing document: ", error);
-            });
-        });
-      })
-      .catch(function(error) {
-        console.error("Error creating minefield collection: ", error);
+        return Promise.all(
+          points.features.map((p) => {
+            return this.firestore
+              .collection("minefields")
+              .doc(name)
+              .collection("mines")
+              .add({
+                location: p
+              })
+              .then(() => {
+                console.log("Document successfully written!");
+              });
+          })
+        );
       });
   };
 

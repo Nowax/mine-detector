@@ -14,7 +14,7 @@ class MapViewAlternative extends React.Component {
 
     this.state = {
       center: [this.props.latitude, this.props.longitude],
-      markers: [[this.props.latitude, this.props.longitude]],
+      markers: this.props.mines,
       bboxPoly: this.props.bboxPoly
     };
   }
