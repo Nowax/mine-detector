@@ -51,11 +51,11 @@ class SaveModal extends Component {
             </DialogTitle>
             <DialogContent dividers>
               <Typography gutterBottom>
-                All {this.state.mines.length} mines' locations has been
+                All {this.state.mines.length} mines' locations have been
                 successfully stored in cloud DB.
               </Typography>
               <Typography gutterBottom>
-                Note that from now on all clients will used these mines'
+                Note that from now on all clients will use these mines'
                 locations as default ones. Remember that each recreation of
                 minefield will affect all clients in detector mode.
               </Typography>

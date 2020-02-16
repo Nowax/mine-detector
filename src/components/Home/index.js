@@ -99,7 +99,7 @@ class HomePage extends Component {
         {(authUser) => (
           <div>
             <h2 style={{ paddingLeft: "15px" }}>
-              Welcome on Mine Detector Web App
+              Welcome to Mine Detector Web App
             </h2>
             {!!authUser && (
               <p style={{ paddingLeft: "15px" }}>
