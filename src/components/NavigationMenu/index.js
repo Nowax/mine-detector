@@ -51,7 +51,7 @@ class NavigationMenuBase extends React.Component {
             >
               <MenuItem onClick={this.handleClose}>
                 <Link className={classes.link} to={ROUTES.HOME}>
-                  Mine Detector
+                  Detector Dashboard
                 </Link>
               </MenuItem>
               {!!authUser && (

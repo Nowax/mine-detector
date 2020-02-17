@@ -80,7 +80,6 @@ class Firebase {
       .limit(1)
       .get()
       .then((snap) => {
-        console.log(snap.docs[0].id, " => ", snap.docs[0].data());
         return this.firestore
           .collection("minefields")
           .doc(snap.docs[0].id)
@@ -88,15 +87,10 @@ class Firebase {
           .get();
       })
       .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          console.log(doc.id, " => ", doc.data());
-        });
+        console.log("Received latest minefiled: ", querySnapshot);
         return querySnapshot;
       })
-      .then((querySnapshot) => {
-        console.log("Received latest minefiled: ", querySnapshot);
-      })
-      .catch((e) => console.log(e));
+      .then((querySnapshot) => querySnapshot.docs.map((d) => d.data()));
   };
 }
 

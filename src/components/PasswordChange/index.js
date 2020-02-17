@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { compose } from 'recompose';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { compose } from "recompose";
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 
-import { withFirebase } from '../Firebase';
+import { withFirebase } from "../Firebase";
 
 const INITIAL_STATE = {
-  passwordOne: '',
-  passwordTwo: '',
-  error: null,
+  passwordOne: "",
+  passwordTwo: "",
+  error: null
 };
 
 class PasswordChangeFormBase extends Component {
@@ -21,7 +21,7 @@ class PasswordChangeFormBase extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = event => {
+  onSubmit = (event) => {
     const { passwordOne } = this.state;
 
     this.props.firebase
@@ -29,14 +29,14 @@ class PasswordChangeFormBase extends Component {
       .then(() => {
         this.setState({ ...INITIAL_STATE });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
 
     event.preventDefault();
   };
 
-  onChange = event => {
+  onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -44,8 +44,7 @@ class PasswordChangeFormBase extends Component {
     const { classes } = this.props;
     const { passwordOne, passwordTwo, error } = this.state;
 
-    const isInvalid =
-      passwordOne !== passwordTwo || passwordOne === '';
+    const isInvalid = passwordOne !== passwordTwo || passwordOne === "";
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -60,10 +59,18 @@ class PasswordChangeFormBase extends Component {
           name="passwordOne"
           onChange={this.onChange}
           value={passwordOne}
+          inputProps={{
+            style: {
+              color: "#000000",
+              background: "#ffffff",
+              width: "130px",
+              borderRadius: "5px"
+            }
+          }}
         />
         <TextField
           id="outlined-password-input"
-          label="Repeat New Password"
+          label="Repeat Password"
           className={classes.textField}
           type="password"
           autoComplete="current-password"
@@ -72,14 +79,24 @@ class PasswordChangeFormBase extends Component {
           name="passwordTwo"
           onChange={this.onChange}
           value={passwordTwo}
-        /><br/>
+          inputProps={{
+            style: {
+              color: "#000000",
+              background: "#ffffff",
+              width: "130px",
+              borderRadius: "5px"
+            }
+          }}
+        />
+        <br />
         <Button
           disabled={isInvalid}
           size="large"
           variant="contained"
           color="primary"
           className={classes.button}
-          type="submit">
+          type="submit"
+        >
           Reset My Password
         </Button>
 
@@ -90,21 +107,21 @@ class PasswordChangeFormBase extends Component {
 }
 
 PasswordChangeFormBase.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   textField: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
   button: {
-    margin: theme.spacing.unit,
-  },
+    margin: theme.spacing.unit
+  }
 });
 
 const PasswordChangeForm = compose(
   withFirebase,
-  withStyles(styles),
+  withStyles(styles)
 )(PasswordChangeFormBase);
 
 export default PasswordChangeForm;

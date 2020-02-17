@@ -1,25 +1,27 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { compose } from 'recompose';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+import { compose } from "recompose";
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 
-import { withFirebase } from '../Firebase';
-import * as ROUTES from '../../constants/routes';
+import { withFirebase } from "../Firebase";
+import * as ROUTES from "../../constants/routes";
 
 const PasswordForgetPage = () => (
   <div>
-    <h1 style={{paddingLeft: "15px"}}>Type your e-mail address to which we'll send password reset link</h1>
-    <PasswordForgetForm style={{paddingLeft: "15px"}}/>
+    <h1 style={{ paddingLeft: "15px" }}>
+      Type your e-mail address to which we'll send password reset link
+    </h1>
+    <PasswordForgetForm style={{ paddingLeft: "15px" }} />
   </div>
 );
 
 const INITIAL_STATE = {
-  email: '',
-  error: null,
+  email: "",
+  error: null
 };
 
 class PasswordForgetFormBase extends Component {
@@ -29,7 +31,7 @@ class PasswordForgetFormBase extends Component {
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = event => {
+  onSubmit = (event) => {
     const { email } = this.state;
 
     this.props.firebase
@@ -37,14 +39,14 @@ class PasswordForgetFormBase extends Component {
       .then(() => {
         this.setState({ ...INITIAL_STATE });
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
 
     event.preventDefault();
   };
 
-  onChange = event => {
+  onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -52,7 +54,7 @@ class PasswordForgetFormBase extends Component {
     const { classes } = this.props;
     const { email, error } = this.state;
 
-    const isInvalid = email === '';
+    const isInvalid = email === "";
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -67,14 +69,24 @@ class PasswordForgetFormBase extends Component {
           name="email"
           onChange={this.onChange}
           value={email}
-        /><br/>
+          inputProps={{
+            style: {
+              color: "#000000",
+              background: "#ffffff",
+              width: "130px",
+              borderRadius: "5px"
+            }
+          }}
+        />
+        <br />
         <Button
           disabled={isInvalid}
           size="large"
           variant="contained"
           color="primary"
           className={classes.button}
-          type="submit">
+          type="submit"
+        >
           Reset password via mail
         </Button>
 
@@ -85,20 +97,20 @@ class PasswordForgetFormBase extends Component {
 }
 
 PasswordForgetFormBase.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   textField: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
   button: {
-    margin: theme.spacing.unit,
-  },
+    margin: theme.spacing.unit
+  }
 });
 
 const PasswordForgetLink = () => (
-  <p style={{paddingLeft: "15px"}}>
+  <p style={{ paddingLeft: "15px" }}>
     <Link to={ROUTES.PASSWORD_FORGET}>Forgot Password?</Link>
   </p>
 );
@@ -107,7 +119,7 @@ export default PasswordForgetPage;
 
 const PasswordForgetForm = compose(
   withFirebase,
-  withStyles(styles),
+  withStyles(styles)
 )(PasswordForgetFormBase);
 
 export { PasswordForgetForm, PasswordForgetLink };

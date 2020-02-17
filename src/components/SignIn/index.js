@@ -1,39 +1,38 @@
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { compose } from 'recompose';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { compose } from "recompose";
+import PropTypes from "prop-types";
 
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { withStyles } from '@material-ui/core/styles';
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import { withStyles } from "@material-ui/core/styles";
 
-import { PasswordForgetLink } from '../PasswordForget';
-import { withFirebase } from '../Firebase';
-import { withTheme } from '../Theme';
-import * as ROUTES from '../../constants/routes';
+import { PasswordForgetLink } from "../PasswordForget";
+import { withFirebase } from "../Firebase";
+import { withTheme } from "../Theme";
+import * as ROUTES from "../../constants/routes";
 
 const SignInPage = () => (
   <div>
-    <h1 style={{paddingLeft: "15px"}}>Sign In</h1>
+    <h1 style={{ paddingLeft: "15px" }}>Sign In</h1>
     <SignInForm />
     <PasswordForgetLink />
   </div>
 );
 
 const INITIAL_STATE = {
-  email: '',
-  password: '',
-  error: null,
+  email: "",
+  password: "",
+  error: null
 };
 
 class SignInFormBase extends Component {
-
   constructor(props) {
     super(props);
     this.state = { ...INITIAL_STATE };
   }
 
-  onSubmit = event => {
+  onSubmit = (event) => {
     const { email, password } = this.state;
 
     this.props.firebase
@@ -42,14 +41,14 @@ class SignInFormBase extends Component {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.DASHBOARD);
       })
-      .catch(error => {
+      .catch((error) => {
         this.setState({ error });
       });
 
     event.preventDefault();
   };
 
-  onChange = event => {
+  onChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
@@ -57,7 +56,7 @@ class SignInFormBase extends Component {
     const { classes } = this.props;
     const { email, password, error } = this.state;
 
-    const isInvalid = password === '' || email === '';
+    const isInvalid = password === "" || email === "";
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -72,6 +71,14 @@ class SignInFormBase extends Component {
           name="email"
           onChange={this.onChange}
           value={email}
+          inputProps={{
+            style: {
+              color: "#000000",
+              background: "#ffffff",
+              width: "130px",
+              borderRadius: "5px"
+            }
+          }}
         />
         <TextField
           id="outlined-password-input"
@@ -82,16 +89,26 @@ class SignInFormBase extends Component {
           margin="normal"
           variant="outlined"
           name="password"
+          inputProps={{
+            style: {
+              color: "#000000",
+              background: "#ffffff",
+              width: "130px",
+              borderRadius: "5px"
+            }
+          }}
           onChange={this.onChange}
           value={password}
-        /><br/>
+        />
+        <br />
         <Button
           disabled={isInvalid}
           size="large"
           variant="contained"
           color="primary"
           className={classes.button}
-          type="submit">
+          type="submit"
+        >
           Sign In
         </Button>
 
@@ -102,23 +119,23 @@ class SignInFormBase extends Component {
 }
 
 SignInFormBase.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-const styles = theme => ({
+const styles = (theme) => ({
   textField: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing.unit
   },
   button: {
-    margin: theme.spacing.unit,
-  },
+    margin: theme.spacing.unit
+  }
 });
 
 const SignInForm = compose(
   withTheme,
   withRouter,
   withFirebase,
-  withStyles(styles),
+  withStyles(styles)
 )(SignInFormBase);
 
 export default SignInPage;
