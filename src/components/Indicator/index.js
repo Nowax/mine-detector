@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { keyframes } from "styled-components";
 import UIFx from "uifx";
 import beepSound from "./my-sounds/beep.mp3";
+import equal from "fast-deep-equal";
 
 const bell = new UIFx(beepSound);
 
@@ -14,26 +15,56 @@ class Indicator extends Component {
     this.state = {
       play: false,
       time: Date.now(),
-      sliderValue: 100,
-      animationDuration: "3s"
+      distance: 0,
+      ranges: [
+        {
+          max: Number.POSITIVE_INFINITY,
+          min: 11,
+          animDuration: 3000,
+          indicator: <Indicator1 duration="3000ms" />
+        },
+        {
+          max: 9,
+          min: 6,
+          animDuration: 1200,
+          indicator: <Indicator3 duration="1200ms" />
+        },
+        {
+          max: 4,
+          min: 0,
+          animDuration: 500,
+          indicator: <Indicator5 duration="500ms" />
+        }
+      ],
+      indicator: <Indicator1 duration="3000ms" />
     };
-
-    // this.url = "https://www.soundjay.com/button/beep-29.mp3";
-    // this.audio = new Audio(this.url);
-    // this.audio.addEventListener(
-    //   "ended",
-    //   function() {
-    //     this.currentTime = 0;
-    //     setTimeout(() => this.play(), 2000);
-    //   },
-    //   false
-    // );
-
-    this.Indicator = <Indicator1 duration={this.state.animationDuration} />;
   }
 
   componentDidMount() {
     this.setLocalInterval(3000);
+  }
+
+  componentDidUpdate() {
+    console.log("Component did update");
+    if (!equal(this.props.distance, this.state.distance)) {
+      console.log("updating", this.props.distance, this.state.distance);
+      this.state.ranges.some((range) => {
+        if (
+          this.props.distance <= range.max &&
+          this.props.distance > range.min &&
+          this.animDuration !== range.animDuration
+        ) {
+          this.setLocalInterval(range.animDuration);
+          bell.play(1.0);
+          this.setState({
+            distance: this.props.distance,
+            indicator: range.indicator
+          });
+          return true;
+        }
+        return false;
+      });
+    }
   }
 
   componentWillUnmount() {
@@ -44,49 +75,15 @@ class Indicator extends Component {
     clearInterval(this.interval);
     this.interval = setInterval(() => {
       this.setState({
-        time: Date.now(),
-        animationDuration: miliseconds + "ms"
+        time: Date.now()
       });
       bell.play(1.0);
-      // this.audio.play();
       console.log("update time");
     }, miliseconds);
   };
 
-  handleSlider = (value) => {
-    value = 100 - value;
-
-    if (value < 100 && value > 60 && this.animationDuration !== "3000ms") {
-      this.setLocalInterval(3000);
-      this.Indicator = <Indicator1 duration={this.state.animationDuration} />;
-    } else if (
-      value < 61 &&
-      value > 35 &&
-      this.animationDuration !== "2000ms"
-    ) {
-      this.setLocalInterval(2000);
-      this.Indicator = <Indicator2 duration={this.state.animationDuration} />;
-    } else if (
-      value < 36 &&
-      value > 20 &&
-      this.animationDuration !== "1000ms"
-    ) {
-      this.setLocalInterval(1000);
-      this.Indicator = <Indicator3 duration={this.state.animationDuration} />;
-    } else if (value < 21 && value > 10 && this.animationDuration !== "800ms") {
-      this.setLocalInterval(800);
-      this.Indicator = <Indicator4 duration={this.state.animationDuration} />;
-    } else if (value < 11 && value > 0 && this.animationDuration !== "500ms") {
-      this.setLocalInterval(500);
-      this.Indicator = <Indicator5 duration={this.state.animationDuration} />;
-    }
-    this.setState({
-      sliderValue: value
-    });
-  };
-
   render() {
-    return <div style={center}>{this.Indicator}</div>;
+    return <div style={center}>{this.state.indicator}</div>;
   }
 }
 

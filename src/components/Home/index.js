@@ -14,10 +14,34 @@ import equal from "fast-deep-equal";
 import { Button, withStyles } from "@material-ui/core";
 import { withTheme } from "../Theme";
 
-const POSITION_TEST = {
+const POSITION_TEST1 = {
   coords: {
-    longitude: 55,
-    latitude: 17
+    longitude: 17.015424,
+    latitude: 51.080835
+  }
+};
+const POSITION_TEST2 = {
+  coords: {
+    longitude: 17.015693,
+    latitude: 51.080188
+  }
+};
+const POSITION_TEST3 = {
+  coords: {
+    longitude: 17.016143,
+    latitude: 51.079042
+  }
+};
+const POSITION_TEST4 = {
+  coords: {
+    longitude: 17.016658,
+    latitude: 51.078186
+  }
+};
+const POSITION_TEST5 = {
+  coords: {
+    longitude: 17.01757,
+    latitude: 51.077168
   }
 };
 
@@ -26,6 +50,7 @@ class HomePageBase extends Component {
     super(props);
 
     this.state = {
+      dev: true,
       locations: null,
       distance: 0,
       sliderValue: 100,
@@ -131,25 +156,79 @@ class HomePageBase extends Component {
               </Button>
             </div>
             <br />
-            <div className={classes.centered}>
-              <Button
-                size="large"
-                variant="contained"
-                color="primary"
-                onClick={() => this.calculateShortestDistance(POSITION_TEST)}
-              >
-                Test{" "}
-              </Button>
-            </div>
-            Distance: {this.state.distance}
-            <br />
-            Is operational: {this.state.isOperational ? "true" : "false"}
-            <br />
-            <Slider onChange={this.handleSlider} />
-            Simulated distance: {this.state.sliderValue}
-            <br />
+            {this.state.dev ? (
+              <div>
+                <div className={classes.centered}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      this.calculateShortestDistance(POSITION_TEST1)
+                    }
+                  >
+                    Test1{" "}
+                  </Button>
+                </div>
+                <div className={classes.centered}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      this.calculateShortestDistance(POSITION_TEST2)
+                    }
+                  >
+                    Test2{" "}
+                  </Button>
+                </div>
+                <div className={classes.centered}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      this.calculateShortestDistance(POSITION_TEST3)
+                    }
+                  >
+                    Test3{" "}
+                  </Button>
+                </div>
+                <div className={classes.centered}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      this.calculateShortestDistance(POSITION_TEST4)
+                    }
+                  >
+                    Test4{" "}
+                  </Button>
+                </div>
+                <div className={classes.centered}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    color="primary"
+                    onClick={() =>
+                      this.calculateShortestDistance(POSITION_TEST5)
+                    }
+                  >
+                    Test5{" "}
+                  </Button>
+                </div>
+                Distance: {this.state.distance}
+                <br />
+                Is operational: {this.state.isOperational ? "true" : "false"}
+                <br />
+                <Slider onChange={this.handleSlider} />
+                Simulated distance: {this.state.sliderValue}
+                <br />
+              </div>
+            ) : null}
             {this.state.isOperational ? (
-              <Indicator distance={this.state.sliderValue} />
+              <Indicator distance={this.state.distance} />
             ) : null}
           </div>
         )}
