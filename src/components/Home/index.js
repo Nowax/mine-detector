@@ -11,8 +11,9 @@ import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 import { distance, point } from "@turf/turf";
 import equal from "fast-deep-equal";
-import { Button, withStyles } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { withTheme } from "../Theme";
+import styled from "styled-components";
 
 const POSITION_TEST1 = {
   coords: {
@@ -50,7 +51,7 @@ class HomePageBase extends Component {
     super(props);
 
     this.state = {
-      dev: true,
+      dev: false,
       locations: null,
       distance: 0,
       sliderValue: 100,
@@ -131,8 +132,6 @@ class HomePageBase extends Component {
   };
 
   render() {
-    const { classes } = this.props;
-
     return (
       <AuthUserContext.Consumer>
         {(authUser) => (
@@ -144,7 +143,7 @@ class HomePageBase extends Component {
               </p>
             )}
             <br />
-            <div className={classes.centered}>
+            <Centered>
               <Button
                 size="large"
                 variant="contained"
@@ -154,11 +153,11 @@ class HomePageBase extends Component {
               >
                 Start detection
               </Button>
-            </div>
+            </Centered>
             <br />
             {this.state.dev ? (
               <div>
-                <div className={classes.centered}>
+                <Centered>
                   <Button
                     size="large"
                     variant="contained"
@@ -169,8 +168,8 @@ class HomePageBase extends Component {
                   >
                     Test1{" "}
                   </Button>
-                </div>
-                <div className={classes.centered}>
+                </Centered>
+                <Centered>
                   <Button
                     size="large"
                     variant="contained"
@@ -181,8 +180,8 @@ class HomePageBase extends Component {
                   >
                     Test2{" "}
                   </Button>
-                </div>
-                <div className={classes.centered}>
+                </Centered>
+                <Centered>
                   <Button
                     size="large"
                     variant="contained"
@@ -193,8 +192,8 @@ class HomePageBase extends Component {
                   >
                     Test3{" "}
                   </Button>
-                </div>
-                <div className={classes.centered}>
+                </Centered>
+                <Centered>
                   <Button
                     size="large"
                     variant="contained"
@@ -205,8 +204,8 @@ class HomePageBase extends Component {
                   >
                     Test4{" "}
                   </Button>
-                </div>
-                <div className={classes.centered}>
+                </Centered>
+                <Centered>
                   <Button
                     size="large"
                     variant="contained"
@@ -217,7 +216,7 @@ class HomePageBase extends Component {
                   >
                     Test5{" "}
                   </Button>
-                </div>
+                </Centered>
                 Distance: {this.state.distance}
                 <br />
                 Is operational: {this.state.isOperational ? "true" : "false"}
@@ -227,8 +226,14 @@ class HomePageBase extends Component {
                 <br />
               </div>
             ) : null}
+            <br />
+            <br />
+            <br />
+            <br />
             {this.state.isOperational ? (
-              <Indicator distance={this.state.distance} />
+              <Centered>
+                <Indicator distance={this.state.distance} />
+              </Centered>
             ) : null}
           </div>
         )}
@@ -237,26 +242,16 @@ class HomePageBase extends Component {
   }
 }
 
-const styles = {
-  spaceAround: {
-    display: "flex",
-    justifyContent: "space-around"
-  },
-  centered: {
-    display: "flex",
-    justifyContent: "center"
-  },
-  grow: {
-    flex: 1,
-    flexGrow: 1
-  }
-};
+const Centered = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 const HomePage = compose(
   withAuthentication,
   withFirebase,
-  withTheme,
-  withStyles(styles)
+  withTheme
 )(HomePageBase);
 
 export default HomePage;

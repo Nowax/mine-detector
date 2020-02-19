@@ -15,7 +15,6 @@ class Indicator extends Component {
     this.state = {
       play: false,
       time: Date.now(),
-      distance: 0,
       ranges: [
         {
           max: Number.POSITIVE_INFINITY,
@@ -46,25 +45,22 @@ class Indicator extends Component {
 
   componentDidUpdate() {
     console.log("Component did update");
-    if (!equal(this.props.distance, this.state.distance)) {
-      console.log("updating", this.props.distance, this.state.distance);
-      this.state.ranges.some((range) => {
-        if (
-          this.props.distance <= range.max &&
-          this.props.distance > range.min &&
-          this.animDuration !== range.animDuration
-        ) {
-          this.setLocalInterval(range.animDuration);
-          bell.play(1.0);
-          this.setState({
-            distance: this.props.distance,
-            indicator: range.indicator
-          });
-          return true;
-        }
-        return false;
-      });
-    }
+
+    this.state.ranges.some((range) => {
+      if (
+        this.props.distance <= range.max &&
+        this.props.distance > range.min &&
+        !equal(this.state.indicator, range.indicator)
+      ) {
+        this.setLocalInterval(range.animDuration);
+        bell.play(1.0);
+        this.setState({
+          indicator: range.indicator
+        });
+        return true;
+      }
+      return false;
+    });
   }
 
   componentWillUnmount() {
@@ -83,16 +79,9 @@ class Indicator extends Component {
   };
 
   render() {
-    return <div style={center}>{this.state.indicator}</div>;
+    return this.state.indicator;
   }
 }
-
-const center = {
-  position: "fixed",
-  top: "70%",
-  left: "50%",
-  transform: `translate(-50%, -50%)`
-};
 
 var pulse1 = keyframes`
       0% {
